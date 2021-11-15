@@ -1,7 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeChat from '../screen/HomeChat';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 const Tab = createMaterialTopTabNavigator();
 
 const TabNavigator = () => {

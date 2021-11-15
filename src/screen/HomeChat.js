@@ -39,7 +39,7 @@ const HomeChat = ({ navigation }) => {
     useEffect(() => {
       const unsub=  getUsers()
       return ()=> unsub
-    }, [])
+    }, [navigation])
 
     const onRefresh = () => {
         setUsers('')

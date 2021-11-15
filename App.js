@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import SplashScreen from 'react-native-splash-screen';
 import StackNavigator from './src/navigation/StackNavigator';
-
 const App = () => {
   useEffect(() => {
     const unsub = setTimeout(() => {
@@ -11,7 +10,7 @@ const App = () => {
   }, [])
 
   return (
-    <StackNavigator />
+    <StackNavigator/>
   )
 }
 export default App;

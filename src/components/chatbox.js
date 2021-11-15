@@ -1,18 +1,21 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
 import auth from '@react-native-firebase/auth';
 import UserAvatar from 'react-native-user-avatar';
 import { Avatar } from "react-native-elements";
 
-const ChatBox = ({ userId, msg, img, onImgTap, avatarText }) => {
-    let imgtext = ''; imgtext = avatarText
+const ChatBox = ({ userId, msg, img, onImgTap, avatarText, time }) => {
+    let imgtext = avatarText
     let isCurrentUser = userId === auth().currentUser.uid ? true : false;
+    let t = time.toDate().toLocaleTimeString()
     return (
         <View style={[styles.cardContainer, {
             alignSelf: isCurrentUser ? 'flex-end' : 'flex-start',
             justifyContent: isCurrentUser ? 'flex-end' : 'flex-start',
             marginLeft: !isCurrentUser ? 5 : 0,
-            marginTop: 5
+            marginTop: img ? 15 : 5,
+            marginRight: isCurrentUser ? 10 : 0,
+            width: width / 2 + 50
         }]}
         >
             {
@@ -25,12 +28,25 @@ const ChatBox = ({ userId, msg, img, onImgTap, avatarText }) => {
             }
 
             <View style={[styles.chatContainer, {
-                marginRight: isCurrentUser ? 10 : 0,
                 backgroundColor: isCurrentUser ? 'rgb(0, 132, 255)' : '#f2f2f2',
-                marginLeft: !isCurrentUser ? 5 : 0
+                marginLeft: !isCurrentUser ? 5 : 0,
             }]}
             >
-                <Text style={[styles.chatTxt, { color: isCurrentUser ? 'white' : 'black' }]}>{msg}</Text>
+                {
+                    img ?
+                        <TouchableOpacity onPress={onImgTap}>
+                            <Image
+                                source={{ uri: img }}
+                                resizeMode='cover'
+                                style={{ width: width / 2, height: 250 }}
+                            />
+                        </TouchableOpacity>
+                        :
+                        <View >
+                            <Text style={[styles.chatTxt, { color: isCurrentUser ? 'white' : 'black' }]}>{msg}</Text>
+                            <Text style={[styles.time,{ color: isCurrentUser ? 'white' : 'black' }]}>{t.substring(0, t.length - 3)}</Text>
+                        </View>
+                }
             </View>
         </View>
     );
@@ -48,10 +64,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "400",
         padding: 8,
+        paddingBottom: 0
     },
     cardContainer: {
         flexDirection: 'row',
         width: width / 2,
         alignItems: 'center',
+    },
+    time:{
+        padding:8,
+       alignSelf:'flex-end',
     }
 });

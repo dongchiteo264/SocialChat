@@ -1,24 +1,26 @@
 
-import React, { useLayoutEffect, useState, useEffect, Fragment } from "react";
+import React, { useLayoutEffect, useState, Fragment, useCallback } from "react";
 import {
-    View,
-    Text,
     SafeAreaView,
-    FlatList,
     Dimensions,
     Platform,
     Keyboard,
     StyleSheet,
-    TextInput,
-    Image,
-    TouchableOpacity
+    KeyboardAvoidingView,
+    View,
+    Text,
+    TouchableOpacity,
 } from "react-native";
-import AppHeader from "../components/header";
 import auth from '@react-native-firebase/auth';
-import ChatBox from "../components/chatbox";
 import firestore from '@react-native-firebase/firestore';
 import { senderMsg } from "../Firebase/FirebaseFunction";
-import SenderCard from "../components/senderCard";
+import AppHeader from "../components/header";
+import SenderCard from '../components/senderCard'
+import { FlatList, TextInput } from "react-native-gesture-handler";
+import ChatBox from "../components/chatbox";
+import Emoji from '../../Emoji.json';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import EmojiView from "../components/emoji";
 
 const Chat = ({ navigation, route }) => {
     const { name, guestUid, imageText } = route.params;
@@ -49,66 +51,141 @@ const Chat = ({ navigation, route }) => {
         return subscriber;
     }, [])
 
-    const onSend = () => {
+    const onChangeTextInput = useCallback((e) => {
+        if (e === '') {
+            setmsgvalue('');
+            settyping(false);
+        }
+        if (e) {
+            setmsgvalue(e);
+            settyping(true);
+        }
+    }, [])
+
+    const onSend = useCallback(() => {
         setmsgvalue('');
         settyping(false)
         if (msgvalue) {
             senderMsg(msgvalue, auth().currentUser.uid, guestUid, img, new Date())
-                .then(() => setsending(false))
+                .then(() => settyping(false))
                 .catch((er) => { console.error(er) })
         }
+    }, [msgvalue, img])
+
+    const getEmoji = (emoji) => {
+        setmsgvalue(msgvalue + emoji)
+    }
+
+    const showEmoji = () => {
+        Keyboard.dismiss()
+        setTimeout(() => {
+            setonEmoji(!onEmoji)
+        }, 0);
+    }
+
+    const openGallery = () => {
+
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView style={styles.container}
+                enabled={true}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={30}
+            >
                 <Fragment>
                     <AppHeader back
                         onLeftPress={() => navigation.navigate('tab')} title={name} titleAlight={'center'}
                         optionalBtn={'align-justify'} headerBg='#ffffff' />
 
                     <FlatList
+                        onTouchStart={() => {
+                            setonEmoji(false)
+                            settyping(false)
+                        }}
                         style={{ marginBottom: 20 }}
                         inverted
                         data={messages}
+                        initialNumToRender={15}
                         keyExtractor={(_, index) => index.toString()}
                         renderItem={({ item }) => {
                             return <ChatBox
                                 msg={item.msgvalue}
                                 userId={item.senBy}
                                 img={item.img}
+                                time={item.createdAt}
                                 avatarText={imageText}
                             />
                         }}
                     />
-                    <SenderCard msgvalue={msgvalue} setmsgvalue={setmsgvalue} typing={typing} settyping={settyping} setonEmoji={setonEmoji} onSend={onSend} />
+                    <SenderCard setonEmoji={setonEmoji}
+                        msgvalue={msgvalue}
+                        openGallery={openGallery}
+                        typing={typing}
+                        onChangeTextInput={onChangeTextInput}
+                        settyping={settyping}
+                        showEmoji={showEmoji}
+                        onSend={onSend}
+                    />
 
+                    {onEmoji &&
+                        <EmojiView getEmoji={getEmoji}/>
+                        }
                 </Fragment>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }
-export default Chat
+export default Chat;
 const { height, width } = Dimensions.get("window");
 const styles = StyleSheet.create({
-    senderContainer: {
-        backgroundColor: 'white',
-        flexDirection: "row",
-        alignItems: "center",
-        alignContent: "center",
-        justifyContent: 'flex-end',
+    container: {
+        flex: 1, backgroundColor: 'white'
+    },
+    body: {
+        flex: 2 / 3,
     },
     input: {
         borderWidth: 2,
-        borderRadius: 30,
-        paddingHorizontal: 15,
-        maxHeight: 100,
+        height: 60,
+        marginHorizontal: 40,
+        paddingHorizontal: 20,
+        marginTop: 20,
+        borderColor: '#AAAAAA'
     },
-    emoji: {
-        justifyContent: "center", alignItems: 'center',
-        marginLeft: 5
+    btn: {
+        width: 130
     },
-    iconleft: {
-        justifyContent: 'center',
+    labelBtn: {
+        marginTop: 5, color: 'gray'
+    },
+    loginBtn: {
+        height: 50,
+        width: 250,
+        backgroundColor: '#3399FF',
         alignItems: 'center',
-        marginRight: 5
-    }
+        justifyContent: 'center',
+        borderRadius: 25
+    },
+    loginLabel: {
+        fontSize: 18,
+        color: 'white'
+    },
+    textContainer: {
+        flexDirection: 'row',
+        marginTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    loaderContainer: {
+        zIndex: 1,
+        elevation: 2,
+        height: height,
+        width: width,
+        position: "absolute",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: 'white',
+    },
 })

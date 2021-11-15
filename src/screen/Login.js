@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 
 import {
     Text,
@@ -59,7 +59,7 @@ const Login = ({ navigation }) => {
                     <Loader />
                 </View>
                 :
-                <LoginView setusername={setusername} setpassword={setpassword} checkSignin={checkSignin} navigate={navigation.navigate}></LoginView>
+                <LoginView setusername={setusername} username={username} password={password} setpassword={setpassword} checkSignin={checkSignin} navigate={navigation.navigate}></LoginView>
             }
         </SafeAreaView>
     )
@@ -79,8 +79,8 @@ function LoginView(props) {
                     }} />
                 </View>
                 <View style={styles.body}>
-                    <TextInput placeholder='Email' placeholderColor='#CCCCCC' returntype='next' keyboardType='email-address' style={styles.input} autoCorrect={false} onChangeText={input => props.setusername(input)} />
-                    <TextInput placeholder='Password' placeholderColor='#CCCCCC' returntype='go' keyboardType='default' secureTextEntry style={styles.input} onChangeText={input => props.setpassword(input)} />
+                    <TextInput placeholder='Email' value={props.username} placeholderColor='#CCCCCC' returntype='next' keyboardType='email-address' style={styles.input} autoCorrect={false} onChangeText={input => props.setusername(input)} />
+                    <TextInput placeholder='Password' value={props.password} placeholderColor='#CCCCCC' returntype='go' keyboardType='default' secureTextEntry style={styles.input} onChangeText={input => props.setpassword(input)} />
                     <View style={{
                         alignItems: 'flex-end',
                         marginHorizontal: 30
