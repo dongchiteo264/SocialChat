@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "816763291003",
-    "project_id": "socialchat-3985c",
-    "storage_bucket": "socialchat-3985c.appspot.com"
+    "project_number": "1000624006586",
+    "project_id": "socialchat-4a1c3",
+    "storage_bucket": "socialchat-4a1c3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:816763291003:android:856914d99770c1dd1569de",
+        "mobilesdk_app_id": "1:1000624006586:android:43169fa7e7077291bb2983",
         "android_client_info": {
           "package_name": "com.socialchat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "816763291003-1l5pu2pe5phnf3tn313ub3gct7pob98j.apps.googleusercontent.com",
+          "client_id": "1000624006586-vqr9sfo5qilath7ai6u3mrfl93q14i87.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAgwC4peYr_Lult01oJDMRgUaDx6QQtrAs"
+          "current_key": "AIzaSyCD6DHbOIuDz5vN2mdc_Ffaf1hjGJn3Ft0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "816763291003-1l5pu2pe5phnf3tn313ub3gct7pob98j.apps.googleusercontent.com",
+              "client_id": "1000624006586-vqr9sfo5qilath7ai6u3mrfl93q14i87.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

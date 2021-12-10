@@ -61,7 +61,7 @@ const HomeChat = ({ navigation }) => {
                             <FlatList
                                 data={users}
                                 renderItem={({ item }) => {
-                                    return <Homecard item={item} navigate={navigation.navigate}/>
+                                    return <Homecard item={item} />
                                 }}
                                 keyExtractor={(item) => item.uid}
                                 refreshControl={

@@ -1,5 +1,5 @@
 
-import React, { useLayoutEffect, useState, Fragment, useCallback } from "react";
+import React, { useLayoutEffect, useState, Fragment, useCallback, useEffect } from "react";
 import {
     SafeAreaView,
     Dimensions,
@@ -7,28 +7,44 @@ import {
     Keyboard,
     StyleSheet,
     KeyboardAvoidingView,
-    View,
-    Text,
-    TouchableOpacity,
 } from "react-native";
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { senderMsg } from "../Firebase/FirebaseFunction";
+import { senderMsg, updateMsg } from "../Firebase/FirebaseFunction";
 import AppHeader from "../components/header";
 import SenderCard from '../components/senderCard'
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import ChatBox from "../components/chatbox";
-import Emoji from '../../Emoji.json';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import EmojiView from "../components/emoji";
+import storage from '@react-native-firebase/storage';
 
 const Chat = ({ navigation, route }) => {
     const { name, guestUid, imageText } = route.params;
     const [messages, setmessages] = useState([])
     const [msgvalue, setmsgvalue] = useState('')
     const [typing, settyping] = useState(false)
-    const [img, setimg] = useState('')
     const [onEmoji, setonEmoji] = useState(false)
+    const [docID, setdocID] = useState([])
+
+    useEffect(() => {
+        if (messages[0] != undefined) {
+            const { senTo } = messages[0]
+            if (senTo === auth().currentUser.uid) {
+                const docid = guestUid > auth().currentUser.uid ? auth().currentUser.uid + "-" + guestUid : guestUid + "-" + auth().currentUser.uid;
+                firestore()
+                    .collection('ChatRoom')
+                    .doc(docid)
+                    .collection('messages')
+                    .get()
+                    .then((snap) => {
+                        snap.forEach(async (doc) => {
+                            await updateMsg(docid, doc.id)
+                        })
+                    })
+            }
+        }
+    }, [navigation, messages, docID])
 
     useLayoutEffect(() => {
         const docid = guestUid > auth().currentUser.uid ? auth().currentUser.uid + "-" + guestUid : guestUid + "-" + auth().currentUser.uid;
@@ -48,6 +64,7 @@ const Chat = ({ navigation, route }) => {
                     })),
                 ),
             );
+
         return subscriber;
     }, [])
 
@@ -62,15 +79,17 @@ const Chat = ({ navigation, route }) => {
         }
     }, [])
 
-    const onSend = useCallback(() => {
+    const onSend = useCallback((imgurl) => {
         setmsgvalue('');
         settyping(false)
-        if (msgvalue) {
-            senderMsg(msgvalue, auth().currentUser.uid, guestUid, img, new Date())
-                .then(() => settyping(false))
+        if (msgvalue || imgurl) {
+            senderMsg(msgvalue, auth().currentUser.uid, guestUid, imgurl, new Date())
+                .then(() => {
+                    settyping(false)
+                })
                 .catch((er) => { console.error(er) })
         }
-    }, [msgvalue, img])
+    }, [msgvalue])
 
     const getEmoji = (emoji) => {
         setmsgvalue(msgvalue + emoji)
@@ -84,7 +103,60 @@ const Chat = ({ navigation, route }) => {
     }
 
     const openGallery = () => {
+        const option = {
+            storageOptions: {
+                path: 'images',
+                mediaType: 'photo'
+            },
+            includeBase64: true,
+        };
 
+        launchImageLibrary(option, response => {
+            if (response.didCancel) {
+                console.log('cancel')
+            } else if (response.errorMessage) {
+                console.log(response.errorCode)
+            } else {
+                response.assets.map(uri => {
+                    uploadFile(uri.fileName, uri.uri)
+                })
+
+            }
+        })
+    }
+
+    const openCamera = () => {
+        launchCamera({ mediaType: 'photo', quality: 1, includeBase64: true, saveToPhotos: true },
+            function (res) {
+                if (res.didCancel) {
+                    console.log('cancel')
+                } else if (res.errorMessage) {
+                    console.log(response.errorCode)
+                }
+                else {
+                    res.assets.map((uri) => {
+                        uploadFile(uri.fileName, uri.uri)
+                    })
+                }
+            })
+    }
+    const uploadFile = (filename, url) => {
+        const uploadTask = storage().ref().child(`/message/${Date.now()}'_'${filename}`).putFile(url)
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                if (progress == 100)
+                    console.log('image uploaded');
+            },
+            (error) => {
+                console.log("error uploading image");
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    onSend(downloadURL)
+                });
+            }
+        );
     }
 
     return (
@@ -97,6 +169,7 @@ const Chat = ({ navigation, route }) => {
                 <Fragment>
                     <AppHeader back
                         onLeftPress={() => navigation.navigate('tab')} title={name} titleAlight={'center'}
+                        titleSize={18}
                         optionalBtn={'align-justify'} headerBg='#ffffff' />
 
                     <FlatList
@@ -115,6 +188,11 @@ const Chat = ({ navigation, route }) => {
                                 userId={item.senBy}
                                 img={item.img}
                                 time={item.createdAt}
+                                onImgTap={() => {
+                                    if (item.img != '') {
+                                        navigation.navigate('showfull', { img: item.img, name: name })
+                                    }
+                                }}
                                 avatarText={imageText}
                             />
                         }}
@@ -122,16 +200,17 @@ const Chat = ({ navigation, route }) => {
                     <SenderCard setonEmoji={setonEmoji}
                         msgvalue={msgvalue}
                         openGallery={openGallery}
+                        openCamera={openCamera}
                         typing={typing}
                         onChangeTextInput={onChangeTextInput}
                         settyping={settyping}
                         showEmoji={showEmoji}
-                        onSend={onSend}
+                        onSend={() => onSend('')}
                     />
 
                     {onEmoji &&
-                        <EmojiView getEmoji={getEmoji}/>
-                        }
+                        <EmojiView getEmoji={getEmoji} />
+                    }
                 </Fragment>
             </KeyboardAvoidingView>
         </SafeAreaView>

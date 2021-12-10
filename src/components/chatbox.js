@@ -6,6 +6,7 @@ import { Avatar } from "react-native-elements";
 
 const ChatBox = ({ userId, msg, img, onImgTap, avatarText, time }) => {
     let imgtext = avatarText
+    console.log(imgtext)
     let isCurrentUser = userId === auth().currentUser.uid ? true : false;
     let t = time.toDate().toLocaleTimeString()
     return (
@@ -15,12 +16,12 @@ const ChatBox = ({ userId, msg, img, onImgTap, avatarText, time }) => {
             marginLeft: !isCurrentUser ? 5 : 0,
             marginTop: img ? 15 : 5,
             marginRight: isCurrentUser ? 10 : 0,
-            width: width / 2 + 50
+            width: width / 2 + 80
         }]}
         >
             {
                 (!isCurrentUser) ?
-                    (imgtext.length < 2) ?
+                    (imgtext.length < 4) ?
                         <UserAvatar size={40} name={imgtext} />
                         :
                         <Avatar size={40} rounded source={{ uri: imgtext }} />
@@ -42,9 +43,9 @@ const ChatBox = ({ userId, msg, img, onImgTap, avatarText, time }) => {
                             />
                         </TouchableOpacity>
                         :
-                        <View >
+                        <View style={{ minWidth: 60 }}>
                             <Text style={[styles.chatTxt, { color: isCurrentUser ? 'white' : 'black' }]}>{msg}</Text>
-                            <Text style={[styles.time,{ color: isCurrentUser ? 'white' : 'black' }]}>{t.substring(0, t.length - 3)}</Text>
+                            <Text style={[styles.time, { color: isCurrentUser ? 'white' : 'black' }]}>{t.substring(0, t.length - 3)}</Text>
                         </View>
                 }
             </View>
@@ -61,18 +62,22 @@ const styles = StyleSheet.create({
     },
     chatTxt: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "400",
         padding: 8,
-        paddingBottom: 0
+        paddingBottom: 0,
     },
     cardContainer: {
         flexDirection: 'row',
         width: width / 2,
         alignItems: 'center',
     },
-    time:{
-        padding:8,
-       alignSelf:'flex-end',
+    time: {
+        alignSelf: 'flex-end',
+        paddingHorizontal: 8,
+        paddingBottom: 5,
+        fontSize: 10,
+        paddingTop: 8
+
     }
 });

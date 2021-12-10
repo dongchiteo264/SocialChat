@@ -41,5 +41,21 @@ export const senderMsg = async (msgvalue, currentID, guestID, img, createAt) => 
         });
 }
 
+export const updateMsg = async (docid,ID ) => {
+    await firestore()
+        .collection('ChatRoom')
+        .doc(docid)
+        .collection('messages')
+        .doc(ID)
+        .update({
+            seen: true
+        }).then(()=>{
+            console.log('updated')
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+}
+
 
 export default addUser;

@@ -6,7 +6,7 @@ import Feather from 'react-native-vector-icons/Feather'
 
 const IconSize = 24;
 
-const AppHeader = ({ style, menu, back, title, right, onRightPress, optionalBtn, optionalBtnPress, rightComponent, headerBg, iconColor, titleAlight, optionalBadge, onLeftPress }) => {
+const AppHeader = ({ titleSize, style, menu, back, title, right, onRightPress, optionalBtn, optionalBtnPress, rightComponent, headerBg, iconColor, titleAlight, optionalBadge, onLeftPress }) => {
 
 	const LeftView = () => (
 		<View style={styles.view}>
@@ -32,7 +32,7 @@ const AppHeader = ({ style, menu, back, title, right, onRightPress, optionalBtn,
 	)
 	const TitleView = () => (
 		<View style={styles.titleView}>
-			<Title style={{ color: iconColor, textAlign: titleAlight }}>{title}</Title>
+			<Title style={{ color: iconColor, textAlign: titleAlight, fontSize: titleSize ? titleSize : 22 }}>{title}</Title>
 		</View>
 	)
 	return (

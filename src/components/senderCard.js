@@ -21,7 +21,7 @@ const SenderCard = (props) => {
         }}>
             <View style={styles.senderContainer}>
                 {!props.typing && <>
-                    <TouchableOpacity style={styles.iconleft}>
+                    <TouchableOpacity style={styles.iconleft} onPress={props.openCamera}>
                         <Entypo name="camera" size={32} color={'#3399FF'} />
                     </TouchableOpacity>
 

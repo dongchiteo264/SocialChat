@@ -7,6 +7,7 @@ import splash from '../components/splash';
 import SignUp from '../screen/SignUp';
 import TabNavigator from './TabNavigation';
 import Chat from '../screen/Chat';
+import showfull from '../screen/ShowFull';
 
 const Stack = createStackNavigator();
 const StackNavigator = () => {
@@ -25,6 +26,13 @@ const StackNavigator = () => {
                 <Stack.Screen name="signup" component={SignUp} />
                 <Stack.Screen name="tab" component={TabNavigator} />
                 <Stack.Screen name="chat" component={Chat} />
+                <Stack.Screen name="showfull" component={showfull} options={{
+                    headerShown:true,
+                   headerStyle:{
+                       backgroundColor:'black',
+                   },
+                   headerTintColor:'white'
+                }}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
