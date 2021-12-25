@@ -1,3 +1,3 @@
 # Social App
-# Messaging
-# Social
+- Using Firebase 
+- React Native 
