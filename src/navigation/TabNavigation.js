@@ -28,8 +28,7 @@ const TabNavigator = () => {
                 tabBarIcon: ({ focused }) => {
 
                 },
-                tabBarIconStyle: { borderWidth: 2, margin: 0 }
-                , tabBarLabelStyle: { borderWidth: 2, margin: 0 },
+             
             
 
             }} />

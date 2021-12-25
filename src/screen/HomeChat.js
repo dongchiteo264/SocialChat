@@ -18,7 +18,7 @@ import Loader from "../components/loader";
 
 
 function Header(props) {
-    return (<AppHeader title='Đoạn chat' headerBg='#ffffff' style={{ borderWidth: 2 }} right={<SimpleLineIcons name="logout" size={28} />} onRightPress={() => auth().signOut().then(() => {
+    return (<AppHeader title='Đoạn chat' headerBg='#ffffff'  right={<SimpleLineIcons name="logout" size={28} />} onRightPress={() => auth().signOut().then(() => {
         clearAsyncStorage().then(() => {
             props.replace('login');
         });
@@ -61,7 +61,7 @@ const HomeChat = ({ navigation }) => {
                             <FlatList
                                 data={users}
                                 renderItem={({ item }) => {
-                                    return <Homecard item={item} />
+                                    return <Homecard item={item} navigation={navigation}/>
                                 }}
                                 keyExtractor={(item) => item.uid}
                                 refreshControl={
