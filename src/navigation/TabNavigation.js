@@ -1,40 +1,57 @@
 import React from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeChat from '../screen/HomeChat';
-const Tab = createMaterialTopTabNavigator();
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Person from '../screen/Person';
+
+const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
     return (
         <Tab.Navigator initialRouteName='home'
             screenOptions={{
-                tabBarIndicatorStyle: {
-                    height: 0, width: 0, elevation: 0
-                },
-                tabBarStyle: {
-                    borderTopWidth: 0.5,
-                    justifyContent: 'space-between',
-                    padding: 0
-                },
-                tabBarActiveTintColor: '#3399FF',
-                tabBarInactiveTintColor: 'black',
-                tabBarContentContainerStyle: {
-                    padding: 0,
-                    height: 50
-                }
+               headerShown:false,
+               tabBarLabelStyle:{
+                   fontSize:12,
+                   marginBottom:3
+               },
+               tabBarStyle:{
+                   padding:0,
+                   marginTop:1,
+               },
+               tabBarIconStyle:{
+                   padding:0,
+                   marginTop:3,
+               },
             }}
-            tabBarPosition='bottom'
         >
             <Tab.Screen name="home" component={HomeChat} options={{
-                tabBarIcon: ({ focused }) => {
-
+                tabBarLabel: 'Chat',
+                tabBarIcon: ({ focused, color }) => {
+                    return <Ionicons name='md-chatbubble-outline' size={24} color={color} />
                 },
-             
-            
 
             }} />
-            <Tab.Screen name="friend" component={HomeChat} />
-            <Tab.Screen name="newfeed" component={HomeChat} />
-            <Tab.Screen name="person" component={HomeChat} />
+            <Tab.Screen name="contact" component={HomeChat} options={{
+                tabBarLabel: 'Liên hệ',
+                tabBarIcon: ({ color }) => {
+                    return <AntDesign name='contacts' color={color} size={24} />
+                }
+            }} />
+            <Tab.Screen name="newfeed" component={HomeChat} options={{
+                tabBarLabel: 'Bảng tin',
+                tabBarIcon: ({ color }) => {
+                    return <FontAwesome name='list-alt' size={24} color={color} />
+                }
+            }} />
+            <Tab.Screen name="person" component={Person} options={{
+                tabBarLabel: 'Tôi',
+                tabBarIcon: ({ focused, color }) => {
+                    return <Ionicons name='person-outline' size={24} color={color} />
+                },
+            }} />
         </Tab.Navigator>
     );
 }

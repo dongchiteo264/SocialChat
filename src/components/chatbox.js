@@ -6,7 +6,6 @@ import { Avatar } from "react-native-elements";
 
 const ChatBox = ({ userId, msg, img, onImgTap, avatarText, time }) => {
     let imgtext = avatarText
-    console.log(imgtext)
     let isCurrentUser = userId === auth().currentUser.uid ? true : false;
     let t = time.toDate().toLocaleTimeString()
     return (

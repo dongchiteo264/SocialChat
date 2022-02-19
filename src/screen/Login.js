@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 import {
     Text,
@@ -19,8 +19,10 @@ LogBox.ignoreAllLogs();
 import auth from '@react-native-firebase/auth';
 import Loader from '../components/loader';
 import { keys, setAsyncStorage } from '../AsyncStorage/UserStorage';
+import PushNotification from "react-native-push-notification";
 
 const Login = ({ navigation }) => {
+
     const [username, setusername] = useState('')
     const [password, setpassword] = useState('')
     const [loading, setloading] = useState(false)
@@ -32,6 +34,7 @@ const Login = ({ navigation }) => {
                 .then((res) => {
                     setloading(false)
                     setAsyncStorage(keys.uuid, res.user.uid)
+                    setAsyncStorage(keys.name, res.user.displayName)
                     navigation.replace('tab')
                 })
                 .catch((error) => {
@@ -43,13 +46,27 @@ const Login = ({ navigation }) => {
                     if (errorCode == "auth/network-request-failed") {
                         Alert.alert('Opps!', 'Không có kết nối Internet');
                     }
-                    Alert.alert('Opps!', 'Email hoặc mật khẩu không đúng');
+                    else {
+                        Alert.alert('Opps!', 'Email hoặc mật khẩu không đúng');
+                    }
                     console.log(errorCode)
                 });
         }
         else {
             Alert.alert('Opps!', 'Vui lòng nhập đầy đủ thông tin');
         }
+    }
+
+
+
+    const handleNotifycation = () => {
+        PushNotification.localNotification({
+            channelId: "Message",
+            title: "Test Notify",
+            id: "21312",
+            message: 'HAHA',
+            bigText: "Đây chỉ là test thôi nhaefwefwefewfewfew",
+        })
     }
 
     return (

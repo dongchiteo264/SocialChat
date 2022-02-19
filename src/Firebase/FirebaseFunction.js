@@ -18,7 +18,7 @@ function addUser(uid, name, email, createAt, avatarLink) {
 
 }
 
-export const senderMsg = async (msgvalue, currentID, guestID, img, createAt) => {
+export const senderMsg = async (msgvalue, currentID, guestID, img, createAt, name) => {
     const docid = guestID > currentID ? currentID + "-" + guestID : guestID + "-" + currentID;
 
     await firestore()
@@ -31,7 +31,8 @@ export const senderMsg = async (msgvalue, currentID, guestID, img, createAt) => 
             senBy: currentID,
             senTo: guestID,
             seen: false,
-            img: img
+            img: img,
+            name: name
         })
         .then(docRef => {
             return docRef
@@ -41,7 +42,7 @@ export const senderMsg = async (msgvalue, currentID, guestID, img, createAt) => 
         });
 }
 
-export const updateMsg = async (docid,ID ) => {
+export const updateMsg = async (docid, ID) => {
     await firestore()
         .collection('ChatRoom')
         .doc(docid)
@@ -49,10 +50,9 @@ export const updateMsg = async (docid,ID ) => {
         .doc(ID)
         .update({
             seen: true
-        }).then(()=>{
-            console.log('updated')
+        }).then(() => {
         })
-        .catch((err)=>{
+        .catch((err) => {
             console.log(err)
         })
 }

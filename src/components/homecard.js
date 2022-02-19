@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, TouchableOpacity, View, Image, Text } from "react-native";
 import UserAvatar from 'react-native-user-avatar';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import PushNotification from 'react-native-push-notification';
 
 
-const Homecard = ({ navigation, item }) => {
+const Homecard = ({ navigation, item, index }) => {
     const [text, settext] = useState('')
     const [seen, setseen] = useState(true)
     const [sentTo, setsentTo] = useState('')
     const [img, setimg] = useState('')
+    const [name, setname] = useState('')
+    const [sentBy, setsentBy] = useState('')
 
     const docid = item.uid > auth().currentUser.uid ? auth().currentUser.uid + "-" + item.uid : item.uid + "-" + auth().currentUser.uid
     firestore().collection('ChatRoom')
@@ -23,21 +26,58 @@ const Homecard = ({ navigation, item }) => {
                 setseen(data.data().seen);
                 setsentTo(data.data().senTo);
                 setimg(data.data().img);
+                setname(data.data().name)
+                setsentBy(data.data().senBy)
             });
         });
 
+    const onNotification = useCallback(() => {
+        if ((seen == false) && (sentTo == auth().currentUser.uid) && (sentBy != auth().currentUser.uid)) {
+            PushNotification.localNotification({
+                channelId: "Message",
+                message: text,
+                title: name,
+                id: index,
+            })
+        }
+
+    }, [text, sentTo, seen, name, sentBy])
+
     return (
-        <Card text={text} item={item} sento={sentTo} seen={seen} navigate={navigation.navigate} img={img} ></Card>
+        <Card text={text} item={item} handleNotifycation={onNotification} sento={sentTo} seen={seen} name={name} navigate={navigation.navigate} img={img} ></Card>
     )
 }
 
+// const handleNotifycation = (message, name, id) => {
+
+//     PushNotification.localNotification({
+//         channelId: "Message",
+//         message: message,
+//         title: name,
+//         id: id,
+//     })
+
+//     // PushNotification.localNotificationSchedule({
+//     //     channelId: "Message",
+//     //     message: message,
+//     //     title: name,
+//     //     id: id,
+//     //     allowWhileIdle: true,
+//     //     date: new Date(Date.now())
+//     // })
+// }
+
+
 
 function Card(props) {
+    const uid = auth().currentUser.uid;
     let textname = props.item.name;
     let avatarname = textname.trimEnd().split(' ').reverse();
     if (avatarname[1] === undefined) {
         avatarname = avatarname[0].charAt(0);
     } else { avatarname = avatarname[1].charAt(0) + ' ' + avatarname[0].charAt(0) }
+    props.handleNotifycation();
+
 
     return (
         <TouchableOpacity onPress={() => props.navigate('chat', {
@@ -60,7 +100,7 @@ function Card(props) {
                 }
 
                 <View>
-                    <Text style={((props.seen === false) &&( props.sento === auth().currentUser.uid)) ? styles.text1 : styles.text}>
+                    <Text style={((props.seen === false) && (props.sento === auth().currentUser.uid)) ? styles.text1 : styles.text}>
                         {props.item.name}
                     </Text>
                     <View style={{ flexDirection: 'row' }}>
