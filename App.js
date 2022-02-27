@@ -5,10 +5,7 @@ import StackNavigator from './src/navigation/StackNavigator';
 
 const App = () => {
   useEffect(() => {
-    const unsub = setTimeout(() => {
-      SplashScreen.hide();
-    }, 0);
-    return () => clearTimeout(unsub)
+    SplashScreen.hide();
   }, [])
 
   return (

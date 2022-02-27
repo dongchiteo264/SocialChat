@@ -83,7 +83,8 @@ function Card(props) {
         <TouchableOpacity onPress={() => props.navigate('chat', {
             name: props.item.name,
             guestUid: props.item.uid,
-            imageText: props.item.avatarLink ? props.item.avatarLink : avatarname
+            imageText: props.item.avatarLink ? props.item.avatarLink : avatarname,
+            email:props.item.email
         })} >
             <View style={styles.mycard}>
 

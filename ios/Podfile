@@ -16,6 +16,8 @@ target 'SocialChat' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-voximplant', :path => '../node_modules/react-native-voximplant'
+
   target 'SocialChatTests' do
     inherit! :complete
     # Pods for testing

@@ -5,7 +5,6 @@ import {
     TextInput,
     Image,
     TouchableOpacity,
-    Keyboard
 } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Entypo from 'react-native-vector-icons/Entypo'

@@ -1,21 +1,27 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   StyleSheet,
   SafeAreaView,
-  Text,
   FlatList,
   RefreshControl,
 } from 'react-native';
 import AppHeader from '../components/header';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import auth from '@react-native-firebase/auth';
-import {clearAsyncStorage} from '../AsyncStorage/UserStorage';
+import { clearAsyncStorage } from '../AsyncStorage/UserStorage';
 import Homecard from '../components/homecard';
 import firestore from '@react-native-firebase/firestore';
 import Loader from '../components/loader';
+import { Voximplant } from 'react-native-voximplant';
 
 function Header(props) {
+  const voximplant = Voximplant.getInstance();
+
+  const disconnectVox = async () => {
+    await voximplant.disconnect();
+  }
+
   return (
     <AppHeader
       title="Đoạn chat"
@@ -33,6 +39,7 @@ function Header(props) {
         auth()
           .signOut()
           .then(() => {
+            disconnectVox();
             clearAsyncStorage().then(() => {
               props.replace('login');
             });
@@ -42,9 +49,10 @@ function Header(props) {
   );
 }
 
-const HomeChat = ({navigation, route}) => {
+const HomeChat = ({ navigation, route }) => {
   const [users, setUsers] = useState(null);
   const [loading, setloading] = useState(true);
+  const voximplant = Voximplant.getInstance();
 
   const getUsers = async () => {
     const querySanp = await firestore()
@@ -56,9 +64,15 @@ const HomeChat = ({navigation, route}) => {
     setloading(false);
   };
   useEffect(() => {
+    voximplant.on(Voximplant.ClientEvents.IncomingCall, incomingCallEvent => {
+      navigation.navigate('IncomingCallScreen', { call: incomingCallEvent.call });
+    })
     const unsub = getUsers();
-    return () => unsub;
-  }, [navigation]);
+    return () => {
+      unsub;
+      voximplant.off(Voximplant.ClientEvents.IncomingCall);
+    };
+  }, []);
 
   const onRefresh = () => {
     setUsers('');
@@ -66,19 +80,20 @@ const HomeChat = ({navigation, route}) => {
     getUsers();
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <Header replace={navigation.replace}></Header>
       <View style={styles.body}>
         {loading ? (
-          <View style={{flex: 1, justifyContent: 'center'}}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
             <Loader />
           </View>
         ) : (
           <View style={styles.listUser}>
             <FlatList
               data={users}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 return <Homecard item={item} index={index} navigation={navigation} />;
               }}
               keyExtractor={item => item.uid}

@@ -20,7 +20,9 @@ import auth from '@react-native-firebase/auth';
 import { StackActions } from '@react-navigation/native';
 import AppHeader from '../components/header';
 import { keys, setAsyncStorage } from '../AsyncStorage/UserStorage';
-import addUser from '../Firebase/FirebaseFunction';
+import addUser from '../Function/Firebase';
+import { ACC_ID, API_KEY, APPLICATION_ID } from "../Constant/voxiplant";
+import { loginVox } from '../Function/Voxiplant.js';
 LogBox.ignoreAllLogs();
 
 const SignUp = ({ navigation }) => {
@@ -37,11 +39,11 @@ const SignUp = ({ navigation }) => {
                     .createUserWithEmailAndPassword(username, password)
                     .then(userCurrent => {
                         let user = userCurrent.user;
-                        user
-                            .updateProfile({
-                                displayName: name,
-                            })
+                        user.updateProfile({
+                            displayName: name,
+                        })
                             .then(() => {
+                                createVox(username, password, name);
                                 addUser(user.uid, name, user.email, new Date(), '');
                                 navigation.dispatch(StackActions.popToTop());
                                 setLoading(false);
@@ -68,6 +70,18 @@ const SignUp = ({ navigation }) => {
             Alert.alert('Opps, có lỗi xảy ra!', 'Vui lòng nhập đầy đủ thông tin');
         }
     };
+    const createVox = (username, password, name) => {
+        let user_name = username.replace('@gmail.com', '');
+        fetch(`https://api.voximplant.com/platform_api/AddUser/?account_id=${ACC_ID}&api_key=${API_KEY}&user_name=${user_name}&user_display_name=${name}&user_password=${password}&application_id=${APPLICATION_ID}`)
+            .then((respone) => respone.json())
+            .then((res) => {
+                console.log('tạo vox thành công ' + res)
+                loginVox(username, password).then((e) => console.log(e))
+            })
+            .catch((e) => {
+                console.log("lỗi " + e)
+            })
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -126,7 +140,7 @@ const SignUp = ({ navigation }) => {
 
                                     <View style={{ marginTop: 20, alignItems: 'center' }}>
                                         <AppButton
-                                            text={'Đăng nhập'}
+                                            text={'Đăng Ký'}
                                             containerStyle={styles.loginBtn}
                                             labelStyle={styles.loginLabel}
                                             onPress={checkRegister}

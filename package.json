@@ -22,8 +22,7 @@
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/stack": "^6.0.11",
     "react": "17.0.2",
-    "react-native": "^0.67.2",
-    "react-native-callkeep": "^4.3.2",
+    "react-native": "^0.67.3",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-picker": "^4.2.0",
@@ -35,7 +34,8 @@
     "react-native-splash-screen": "^3.3.0",
     "react-native-tab-view": "^3.1.1",
     "react-native-user-avatar": "^1.0.7",
-    "react-native-vector-icons": "^9.0.0"
+    "react-native-vector-icons": "^9.0.0",
+    "react-native-voximplant": "^1.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

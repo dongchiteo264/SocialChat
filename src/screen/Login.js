@@ -19,7 +19,9 @@ LogBox.ignoreAllLogs();
 import auth from '@react-native-firebase/auth';
 import Loader from '../components/loader';
 import { keys, setAsyncStorage } from '../AsyncStorage/UserStorage';
-import PushNotification from "react-native-push-notification";
+import { loginVox } from '../Function/Voxiplant';
+import { Voximplant } from 'react-native-voximplant';
+const voximplant = Voximplant.getInstance();
 
 const Login = ({ navigation }) => {
 
@@ -33,6 +35,7 @@ const Login = ({ navigation }) => {
             auth().signInWithEmailAndPassword(username, password)
                 .then((res) => {
                     setloading(false)
+                    connectVoxiplant();
                     setAsyncStorage(keys.uuid, res.user.uid)
                     setAsyncStorage(keys.name, res.user.displayName)
                     navigation.replace('tab')
@@ -56,19 +59,20 @@ const Login = ({ navigation }) => {
             Alert.alert('Opps!', 'Vui lòng nhập đầy đủ thông tin');
         }
     }
+    const connectVoxiplant = () => {
+        const requestConnect = setInterval(async () => {
+            const status = await voximplant.getClientState();
+            if (status === Voximplant.ClientState.DISCONNECTED) {
+                await voximplant.connect();
+            }
+            if (status === Voximplant.ClientState.CONNECTED) {
+                clearInterval(requestConnect)
+                loginVox(username, password);
+            }
+        }, 500);
+    };
 
-
-
-    const handleNotifycation = () => {
-        PushNotification.localNotification({
-            channelId: "Message",
-            title: "Test Notify",
-            id: "21312",
-            message: 'HAHA',
-            bigText: "Đây chỉ là test thôi nhaefwefwefewfewfew",
-        })
-    }
-
+  
     return (
         <SafeAreaView style={styles.container}>
             {loading ?

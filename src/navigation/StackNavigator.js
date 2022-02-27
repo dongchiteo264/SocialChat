@@ -8,6 +8,8 @@ import SignUp from '../screen/SignUp';
 import TabNavigator from './TabNavigation';
 import Chat from '../screen/Chat';
 import showfull from '../screen/ShowFull';
+import CallingScreen from '../screen/CallingScreen';
+import IncomingCallScreen from '../screen/IncomingCallScreen';
 
 const Stack = createStackNavigator();
 const StackNavigator = () => {
@@ -27,12 +29,21 @@ const StackNavigator = () => {
                 <Stack.Screen name="tab" component={TabNavigator} />
                 <Stack.Screen name="chat" component={Chat} />
                 <Stack.Screen name="showfull" component={showfull} options={{
-                    headerShown:true,
-                   headerStyle:{
-                       backgroundColor:'black',
-                   },
-                   headerTintColor:'white'
-                }}/>
+                    headerShown: true,
+                    headerStyle: {
+                        backgroundColor: 'black',
+                    },
+                    headerTintColor: 'white'
+                }} />
+                <Stack.Screen name="callingscreen" component={CallingScreen} options={{
+                    headerShown: false,
+                }} />
+
+                <Stack.Screen name="incommingcallscreen" component={IncomingCallScreen} options={{
+                    headerShown: false,
+                    gestureDirection: 'vertical', ...TransitionPresets.DefaultTransition
+                }} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );

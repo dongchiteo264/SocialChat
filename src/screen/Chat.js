@@ -14,11 +14,10 @@ import {
   KeyboardAvoidingView,
   View,
   TouchableOpacity,
-  PermissionsAndroid
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { senderMsg, updateMsg } from '../Firebase/FirebaseFunction';
+import { senderMsg, updateMsg } from '../Function/Firebase';
 import AppHeader from '../components/header';
 import SenderCard from '../components/senderCard';
 import { FlatList } from 'react-native-gesture-handler';
@@ -28,7 +27,6 @@ import EmojiView from '../components/emoji';
 import storage from '@react-native-firebase/storage';
 import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import RNCallKeep from 'react-native-callkeep';
 
 
 function RightComponent({ onPressPhone }) {
@@ -51,7 +49,7 @@ function RightComponent({ onPressPhone }) {
 
 
 const Chat = ({ navigation, route }) => {
-  const { name, guestUid, imageText } = route.params;
+  const { name, guestUid, imageText, email } = route.params;
   const [messages, setmessages] = useState([]);
   const [msgvalue, setmsgvalue] = useState('');
   const [typing, settyping] = useState(false);
@@ -214,33 +212,8 @@ const Chat = ({ navigation, route }) => {
 
 
   const CallPhone = () => {
-    const options = {
-      ios: {
-        appName: 'My app name',
-      },
-      android: {
-        alertTitle: 'Permissions required',
-        alertDescription: 'This application needs to access your phone accounts',
-        cancelButton: 'Cancel',
-        okButton: 'ok',
-        imageName: 'phone_account_icon',
-        // additionalPermissions: [PermissionsAndroid.PERMISSIONS.READ_CONTACTS],
-        // Required to get audio in background when using Android 11  
-        foregroundService: {
-          channelId: 'com.company.my',
-          channelName: 'Foreground service for my app',
-          notificationTitle: 'My app is running on background',
-          notificationIcon: 'Path to the resource icon of the notification',
-        },
-      }
-    }
-
-
-    try {
-      RNCallKeep.setup(options).then((accepted => console.log(accepted)))
-      RNCallKeep.setAvailable(true); // Only used for Android, see doc above.
-    } catch (err) {
-      console.error('initializeCallKeep error:', err.message);
+    if (email) {
+      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', '') })
     }
   }
 
