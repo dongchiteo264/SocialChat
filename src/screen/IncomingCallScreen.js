@@ -7,7 +7,7 @@ const IncomingCallScreen = ({navigation, route}) => {
   const [caller, setCaller] = useState('');
 
   const onAccept = () => {
-    navigation.navigate('CallingScreen', {
+    navigation.navigate('callingscreen', {
       call,
       isIncomingCall: true,
     });
@@ -25,7 +25,7 @@ const IncomingCallScreen = ({navigation, route}) => {
     return () => {
       call.off(Voximplant.CallEvents.Disconnected);
     };
-  }, []);
+  }, []); 
 
   return (
     <View style={{flex: 1}}>

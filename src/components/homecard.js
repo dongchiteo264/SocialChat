@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { StyleSheet, TouchableOpacity, View, Image, Text } from "react-native";
 import UserAvatar from 'react-native-user-avatar';
 import firestore from '@react-native-firebase/firestore';

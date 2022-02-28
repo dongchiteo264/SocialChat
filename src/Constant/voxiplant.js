@@ -1,5 +1,5 @@
 export const APP_NAME = 'socialchat';
-export const ACC_NAME = 'dongchiteo264';
-export const ACC_ID=4288456;
-export const API_KEY='7144e2c8-3c00-477b-9580-caf201c50896';
-export const APPLICATION_ID=10590084;
+export const ACC_NAME = 'hahahehe';
+export const ACC_ID = 4289467;
+export const API_KEY = 'e3800281-9f66-4f62-b22e-9be6307c23ae';
+export const APPLICATION_ID = 10591464;

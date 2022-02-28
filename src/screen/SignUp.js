@@ -118,6 +118,7 @@ const SignUp = ({ navigation }) => {
                                         returntype="next"
                                         keyboardType="email-address"
                                         style={styles.input}
+                                        value={username}
                                         onChangeText={input => setusername(input)}
                                     />
                                     <TextInput
@@ -127,6 +128,7 @@ const SignUp = ({ navigation }) => {
                                         keyboardType="default"
                                         style={styles.input}
                                         onChangeText={input => setname(input)}
+                                        value={name}
                                     />
                                     <TextInput
                                         placeholder="Password"
@@ -136,6 +138,7 @@ const SignUp = ({ navigation }) => {
                                         onChangeText={input => setpassword(input)}
                                         style={styles.input}
                                         secureTextEntry
+                                        value={password}
                                     />
 
                                     <View style={{ marginTop: 20, alignItems: 'center' }}>

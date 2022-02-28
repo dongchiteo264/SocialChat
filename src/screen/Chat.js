@@ -29,14 +29,14 @@ import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 
-function RightComponent({ onPressPhone }) {
+function RightComponent({ onPressPhone, onPressVideo }) {
   return (<View style={styles.rightButton}>
     <TouchableOpacity onPress={onPressPhone}>
       <FontAwesome name='phone' size={26} color={'#3399FF'} style={{
         marginRight: 15
       }} />
     </TouchableOpacity>
-    <TouchableOpacity onPress={() => console.log('k')}>
+    <TouchableOpacity onPress={onPressVideo}>
       <FontAwesome name='video-camera' size={26} color={'#3399FF'} style={{
         marginRight: 15
       }} />
@@ -213,10 +213,15 @@ const Chat = ({ navigation, route }) => {
 
   const CallPhone = () => {
     if (email) {
-      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', '') })
+      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', ''), calltype: 'voice' })
     }
   }
 
+  const CallVideo = () => {
+    if (email) {
+      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', ''), calltype: 'video' })
+    }
+  }
 
 
   return (
@@ -234,7 +239,10 @@ const Chat = ({ navigation, route }) => {
             titleAlight={'left'}
             titleSize={18}
             rightComponent={
-              <RightComponent onPressPhone={() => CallPhone()} />
+              <RightComponent
+                onPressPhone={() => CallPhone()}
+                onPressVideo={() => CallVideo()}
+              />
             }
             headerBg="#ffffff"
           />

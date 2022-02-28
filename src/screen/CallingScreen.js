@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Image,
     PermissionsAndroid,
     Platform,
     StyleSheet,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from "react-native";
 import { Voximplant } from 'react-native-voximplant';
 
@@ -15,11 +16,23 @@ const PERMISSIONS = [
 ];
 
 const CallingScreen = ({ navigation, route }) => {
-    const { callee, call: incomingCall, isIncomingCall } = route.params;
+    const { callee, call: incomingCall, isIncomingCall, calltype } = route.params;
+    const call = useRef(incomingCall);
+
+    const voximplant = Voximplant.getInstance();
+    const camera = Voximplant.Hardware.CameraManager.getInstance();
+    const audio = Voximplant.Hardware.AudioDeviceManager.getInstance();
+
 
     const [permissionGranted, setPermissionGranted] = useState(false);
     const [localVideoStreamId, setLocalVideoStreamId] = useState('');
     const [remoteVideoStreamId, setRemoteVideoStreamId] = useState('');
+    const [callStatus, setCallStatus] = useState('Initializing...');
+    const endpoint = useRef(null);
+
+
+    const [frontCamera, setFrontCamera] = useState(true);
+    const [soundEarpiece, setSoundEarpiece] = useState(true);
 
     const getPermissions = async () => {
         const granted = await PermissionsAndroid.requestMultiple(PERMISSIONS);
@@ -40,21 +53,103 @@ const CallingScreen = ({ navigation, route }) => {
     }, [])
 
     const showError = reason => {
-        Alert.alert('Call failed', `Reason: ${reason}`, [
+        if (reason == 'Decline')
+            reason = 'Người dùng bận'
+        Alert.alert('Call failed', reason, [
             {
                 text: 'OK',
-                onPress: navigation.navigate('HomeScreen'),
+                onPress: navigation.goBack()
             },
         ]);
+    };
+
+    const onHangup = () => {
+        call.current.hangup();
+    };
+
+    const onReverseCamera = () => {
+        camera.switchCamera(
+            frontCamera
+                ? Voximplant.Hardware.CameraType.BACK
+                : Voximplant.Hardware.CameraType.FRONT,
+        );
+        setFrontCamera(!frontCamera);
+    };
+
+    const subscribeToCallEvents = () => {
+
+        call.current.on(Voximplant.CallEvents.Failed, callEvent => {
+            showError(callEvent.reason);
+        });
+        call.current.on(Voximplant.CallEvents.ProgressToneStart, callEvent => {
+            setCallStatus('Calling...');
+        });
+        call.current.on(Voximplant.CallEvents.Connected, callEvent => {
+            setCallStatus('Connected');
+        });
+        call.current.on(Voximplant.CallEvents.Disconnected, callEvent => {
+            navigation.goBack();
+        });
+        call.current.on(
+            Voximplant.CallEvents.LocalVideoStreamAdded,
+            callEvent => {
+                setLocalVideoStreamId(callEvent.videoStream.id);
+            },
+        );
+        call.current.on(Voximplant.CallEvents.EndpointAdded, callEvent => {
+            endpoint.current = callEvent.endpoint;
+            subscribeToEndpointEvent();
+        });
+    };
+
+    const subscribeToEndpointEvent = async () => {
+        endpoint.current.on(
+            Voximplant.EndpointEvents.RemoteVideoStreamAdded,
+            endpointEvent => {
+                setRemoteVideoStreamId(endpointEvent.videoStream.id);
+            },
+        );
+    };
+    const callSettings = {
+        video: {
+            sendVideo: (calltype === 'video') ? true : false,
+            receiveVideo: (calltype === 'video') ? true : false,
+        },
+    };
+
+    const makeCall = async () => {
+        call.current = await voximplant.call(callee, callSettings);
+        subscribeToCallEvents();
+    };
+
+    const answerCall = () => {
+        subscribeToCallEvents();
+        endpoint.current = call.current.getEndpoints()[0];
+        console.log(call.current.getEndpoints()[0])
+        subscribeToEndpointEvent();
+        call.current.answer(callSettings);
     };
 
     useEffect(() => {
         if (!permissionGranted)
             return;
-        
-    }, [])
 
-    const ButtonPanel = () => {
+        if (isIncomingCall) {
+            answerCall(); //tra loi cuoc goi
+        } else {
+            makeCall(); //tao cuoc goi
+        }
+
+        return () => {
+            //huy su kien
+            call.current.off(Voximplant.CallEvents.Failed);
+            call.current.off(Voximplant.CallEvents.ProgressToneStart);
+            call.current.off(Voximplant.CallEvents.Connected);
+            call.current.off(Voximplant.CallEvents.Disconnected);
+        };
+    }, [permissionGranted])
+
+    const ButtonPanel = ({ onChangeCamera, onChangeMic, switch_camera, endcall }) => {
         return (
             <View style={styles.panelView}>
                 <ButtonView
@@ -67,6 +162,7 @@ const CallingScreen = ({ navigation, route }) => {
                     }
                 />
                 <ButtonView
+                    onPress={() => switch_camera()}
                     backgroundColor='#606060'
                     Image={
                         <Image
@@ -85,6 +181,7 @@ const CallingScreen = ({ navigation, route }) => {
                     }
                 />
                 <ButtonView
+                    onPress={() => endcall()}
                     backgroundColor={'red'}
                     Image={
                         <Image
@@ -97,9 +194,11 @@ const CallingScreen = ({ navigation, route }) => {
         )
     }
 
-    const ButtonView = ({ backgroundColor, Image }) => {
+    const ButtonView = ({ backgroundColor, Image, onPress }) => {
         return (
-            <TouchableOpacity style={[styles.btnView, { backgroundColor }]}>
+            <TouchableOpacity style={[styles.btnView, { backgroundColor }]}
+                onPress={onPress}
+            >
                 {Image}
             </TouchableOpacity>)
     }
@@ -115,7 +214,10 @@ const CallingScreen = ({ navigation, route }) => {
                 showOnTop={true}
                 style={styles.localVideoStyles}
             />
-            <ButtonPanel />
+            <ButtonPanel
+                endcall={onHangup}
+                switch_camera={onReverseCamera}
+            />
         </View>
     )
 }
@@ -127,11 +229,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     remoteVideoStyles: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
+        height: '100%',
+        borderWidth: 2
     },
     localVideoStyles: {
         position: 'absolute',

@@ -65,7 +65,7 @@ const HomeChat = ({ navigation, route }) => {
   };
   useEffect(() => {
     voximplant.on(Voximplant.ClientEvents.IncomingCall, incomingCallEvent => {
-      navigation.navigate('IncomingCallScreen', { call: incomingCallEvent.call });
+      navigation.navigate('incommingcallscreen', { call: incomingCallEvent.call });
     })
     const unsub = getUsers();
     return () => {

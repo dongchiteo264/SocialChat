@@ -1,5 +1,5 @@
 import React, { Fragment, useLayoutEffect, useState } from 'react';
-import { View, Dimensions, Image, StyleSheet } from 'react-native';
+import { View, Dimensions, Image, StyleSheet, StatusBar, Pressable } from 'react-native';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
 
 const ShowFull = ({ navigation, route }) => {
@@ -14,6 +14,18 @@ const ShowFull = ({ navigation, route }) => {
   }, [navigation]);
   return (
     <Fragment>
+      <StatusBar backgroundColor={'black'} barStyle='light-content' />
+
+      <Pressable onPress={() => console.log('s')}
+        style={{
+          position: 'absolute',
+          zIndex: -1,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          top: 0,
+        }} />
+
       <View style={{ backgroundColor: 'black', flex: 1 }}>
         <ReactNativeZoomableView
           maxZoom={1.5}
