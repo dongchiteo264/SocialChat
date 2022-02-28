@@ -35,13 +35,13 @@ const Homecard = ({ navigation, item, index }) => {
         if ((seen == false) && (sentTo == auth().currentUser.uid) && (sentBy != auth().currentUser.uid)) {
             PushNotification.localNotification({
                 channelId: "Message",
-                message: text,
+                message: img ? 'Hình ảnh' : text,
                 title: name,
                 id: index,
             })
         }
 
-    }, [text, sentTo, seen, name, sentBy])
+    }, [text, sentTo, seen, name, sentBy, img])
 
     return (
         <Card text={text} item={item} handleNotifycation={onNotification} sento={sentTo} seen={seen} name={name} navigate={navigation.navigate} img={img} ></Card>
@@ -84,7 +84,7 @@ function Card(props) {
             name: props.item.name,
             guestUid: props.item.uid,
             imageText: props.item.avatarLink ? props.item.avatarLink : avatarname,
-            email:props.item.email
+            email: props.item.email
         })} >
             <View style={styles.mycard}>
 

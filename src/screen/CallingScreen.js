@@ -27,7 +27,7 @@ const CallingScreen = ({ navigation, route }) => {
     const [permissionGranted, setPermissionGranted] = useState(false);
     const [localVideoStreamId, setLocalVideoStreamId] = useState('');
     const [remoteVideoStreamId, setRemoteVideoStreamId] = useState('');
-    const [callStatus, setCallStatus] = useState('Initializing...');
+    const [callStatus, setCallStatus] = useState('Initializing');
     const endpoint = useRef(null);
 
 
@@ -82,13 +82,20 @@ const CallingScreen = ({ navigation, route }) => {
             showError(callEvent.reason);
         });
         call.current.on(Voximplant.CallEvents.ProgressToneStart, callEvent => {
-            setCallStatus('Calling...');
+            setCallStatus('Calling');
         });
         call.current.on(Voximplant.CallEvents.Connected, callEvent => {
             setCallStatus('Connected');
         });
         call.current.on(Voximplant.CallEvents.Disconnected, callEvent => {
-            navigation.goBack();
+            navigation.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: 'tab',
+                    },
+                ],
+            });
         });
         call.current.on(
             Voximplant.CallEvents.LocalVideoStreamAdded,
@@ -127,7 +134,11 @@ const CallingScreen = ({ navigation, route }) => {
         endpoint.current = call.current.getEndpoints()[0];
         console.log(call.current.getEndpoints()[0])
         subscribeToEndpointEvent();
-        call.current.answer(callSettings);
+        call.current.answer( {video: {
+            sendVideo: true,
+            receiveVideo: true,
+          }})
+
     };
 
     useEffect(() => {
@@ -207,12 +218,12 @@ const CallingScreen = ({ navigation, route }) => {
         <View style={styles.container}>
             <Voximplant.VideoView
                 videoStreamId={remoteVideoStreamId}
-                style={styles.remoteVideoStyles}
+                style={(callStatus === 'Connected') ? styles.remoteVideoStyles : styles.remoteVideoStyles1}
             />
             <Voximplant.VideoView
                 videoStreamId={localVideoStreamId}
                 showOnTop={true}
-                style={styles.localVideoStyles}
+                style={(callStatus === 'Connected') ? styles.localVideoStyles : styles.localVideoStyles1}
             />
             <ButtonPanel
                 endcall={onHangup}
@@ -229,8 +240,15 @@ const styles = StyleSheet.create({
         flex: 1
     },
     remoteVideoStyles: {
-        height: '100%',
-        borderWidth: 2
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+    },
+    remoteVideoStyles1: {
+        height: 0,
+        width: 0
     },
     localVideoStyles: {
         position: 'absolute',
@@ -238,6 +256,10 @@ const styles = StyleSheet.create({
         right: 10,
         width: 100,
         height: 150,
+    },
+    localVideoStyles1: {
+        height: '100%',
+        width: '100%',
     },
     panelView: {
         position: 'absolute',
