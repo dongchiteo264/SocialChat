@@ -14,6 +14,7 @@ import Homecard from '../components/homecard';
 import firestore from '@react-native-firebase/firestore';
 import Loader from '../components/loader';
 import { Voximplant } from 'react-native-voximplant';
+import { SCREENS } from '../Constant';
 
 function Header(props) {
   const voximplant = Voximplant.getInstance();
@@ -41,7 +42,7 @@ function Header(props) {
           .then(() => {
             disconnectVox();
             clearAsyncStorage().then(() => {
-              props.replace('login');
+              props.replace(SCREENS.LOGIN);
             });
           })
       }
@@ -65,7 +66,7 @@ const HomeChat = ({ navigation, route }) => {
   };
   useEffect(() => {
     voximplant.on(Voximplant.ClientEvents.IncomingCall, incomingCallEvent => {
-      navigation.navigate('incommingcallscreen', { call: incomingCallEvent.call });
+      navigation.navigate(SCREENS.INCOMMING_CALL, { call: incomingCallEvent.call });
     })
     const unsub = getUsers();
     return () => {

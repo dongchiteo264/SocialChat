@@ -23,6 +23,7 @@ import { keys, setAsyncStorage } from '../AsyncStorage/UserStorage';
 import addUser from '../Function/Firebase';
 import { ACC_ID, API_KEY, APPLICATION_ID } from "../Constant/voxiplant";
 import { loginVox } from '../Function/Voxiplant.js';
+import { SCREENS } from '../Constant';
 LogBox.ignoreAllLogs();
 
 const SignUp = ({ navigation }) => {
@@ -48,7 +49,7 @@ const SignUp = ({ navigation }) => {
                                 navigation.dispatch(StackActions.popToTop());
                                 setLoading(false);
                                 setAsyncStorage(keys.uuid, user.uid);
-                                navigation.replace('tab');
+                                navigation.replace(SCREENS.TAB);
                             });
                     })
                     .catch(error => {
@@ -99,7 +100,7 @@ const SignUp = ({ navigation }) => {
                                 <View style={styles.logoContainer}>
                                     <AppHeader
                                         back
-                                        onLeftPress={() => navigation.navigate('login')}
+                                        onLeftPress={() => navigation.navigate(SCREENS.LOGIN)}
                                     />
                                     <Image
                                         source={require('../res/img/logo.png')}

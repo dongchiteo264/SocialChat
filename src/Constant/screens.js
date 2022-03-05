@@ -1,0 +1,11 @@
+export const SCREENS = {
+    SPLASH: 'SPLASH',
+    HOME: 'HOME_CHAT',
+    LOGIN: 'LOGIN',
+    SIGNUP: 'SIGN_UP',
+    TAB: 'TAB',
+    CHAT: 'CHAT',
+    SHOWFULL: 'SHOWFULL',
+    INCOMMING_CALL: 'INCOMMING_CALL',
+    CALLING: 'CALLING',
+}

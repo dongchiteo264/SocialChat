@@ -4,6 +4,7 @@ import UserAvatar from 'react-native-user-avatar';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import PushNotification from 'react-native-push-notification';
+import { SCREENS } from "../Constant";
 
 
 const Homecard = ({ navigation, item, index }) => {
@@ -80,7 +81,7 @@ function Card(props) {
 
 
     return (
-        <TouchableOpacity onPress={() => props.navigate('chat', {
+        <TouchableOpacity onPress={() => props.navigate(SCREENS.CHAT, {
             name: props.item.name,
             guestUid: props.item.uid,
             imageText: props.item.avatarLink ? props.item.avatarLink : avatarname,

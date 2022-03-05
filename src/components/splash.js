@@ -4,6 +4,7 @@ import { getAsyncStorage, keys } from "../AsyncStorage/UserStorage";
 import PushNotification from 'react-native-push-notification';
 import { Voximplant } from 'react-native-voximplant';
 import { loginVox } from "../Function/Voxiplant";
+import { SCREENS } from "../Constant";
 const voximplant = Voximplant.getInstance();
 
 const splash = ({ navigation }) => {
@@ -47,14 +48,14 @@ const splash = ({ navigation }) => {
         getAsyncStorage(keys.uuid)
             .then((uuid) => {
                 if (uuid && status === Voximplant.ClientState.CONNECTED) {
-                    navigation.replace('tab')
+                    navigation.replace(SCREENS.TAB)
                 } else if (!uuid && status === Voximplant.ClientState.CONNECTED) {
-                    navigation.replace('login')
+                    navigation.replace(SCREENS.LOGIN)
                 }
             })
             .catch((err) => {
                 console.log('lỗi ' + err)
-                navigation.replace('login')
+                navigation.replace(SCREENS.LOGIN)
             })
     }
 

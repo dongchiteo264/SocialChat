@@ -21,6 +21,7 @@ import Loader from '../components/loader';
 import { keys, setAsyncStorage } from '../AsyncStorage/UserStorage';
 import { loginVox } from '../Function/Voxiplant';
 import { Voximplant } from 'react-native-voximplant';
+import { SCREENS } from '../Constant';
 const voximplant = Voximplant.getInstance();
 
 const Login = ({ navigation }) => {
@@ -38,7 +39,7 @@ const Login = ({ navigation }) => {
                     connectVoxiplant();
                     setAsyncStorage(keys.uuid, res.user.uid)
                     setAsyncStorage(keys.name, res.user.displayName)
-                    navigation.replace('tab')
+                    navigation.replace(SCREENS.TAB)
                 })
                 .catch((error) => {
                     var errorCode = error.code;
@@ -124,7 +125,7 @@ function LoginView(props) {
                             color: '#3399FF',
                             fontSize: 15,
                             fontWeight: '700'
-                        }} onPress={() => props.navigate('signup')} />
+                        }} onPress={() => props.navigate(SCREENS.SIGNUP)} />
                     </View>
                 </View>
             </View>

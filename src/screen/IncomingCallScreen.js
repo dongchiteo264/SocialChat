@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {Voximplant} from 'react-native-voximplant';
+import { SCREENS } from '../Constant';
 
 const IncomingCallScreen = ({navigation, route}) => {
   const {call} = route.params;
   const [caller, setCaller] = useState('');
 
   const onAccept = () => {
-    navigation.navigate('callingscreen', {
+    navigation.navigate(SCREENS.CALLING, {
       call,
       isIncomingCall: true,
     });

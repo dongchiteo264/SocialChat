@@ -9,6 +9,7 @@ import {
     Alert
 } from "react-native";
 import { Voximplant } from 'react-native-voximplant';
+import { SCREENS } from "../Constant";
 
 const PERMISSIONS = [
     PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -92,7 +93,7 @@ const CallingScreen = ({ navigation, route }) => {
                 index: 0,
                 routes: [
                     {
-                        name: 'tab',
+                        name: SCREENS.TAB
                     },
                 ],
             });

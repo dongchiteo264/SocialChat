@@ -27,6 +27,7 @@ import EmojiView from '../components/emoji';
 import storage from '@react-native-firebase/storage';
 import Feather from 'react-native-vector-icons/Feather'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { SCREENS } from '../Constant';
 
 
 function RightComponent({ onPressPhone, onPressVideo }) {
@@ -213,13 +214,13 @@ const Chat = ({ navigation, route }) => {
 
   const CallPhone = () => {
     if (email) {
-      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', ''), calltype: 'voice' })
+      navigation.navigate(SCREENS.CALLING, { callee: email.replace('@gmail.com', ''), calltype: 'voice' })
     }
   }
 
   const CallVideo = () => {
     if (email) {
-      navigation.navigate("callingscreen", { callee: email.replace('@gmail.com', ''), calltype: 'video' })
+      navigation.navigate(SCREENS.CALLING, { callee: email.replace('@gmail.com', ''), calltype: 'video' })
     }
   }
 
@@ -266,7 +267,7 @@ const Chat = ({ navigation, route }) => {
                   time={item.createdAt}
                   onImgTap={() => {
                     if (item.img != '') {
-                      navigation.navigate('showfull', {
+                      navigation.navigate(SCREENS.SHOWFULL, {
                         img: item.img,
                         name: name,
                       });
